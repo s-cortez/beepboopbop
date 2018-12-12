@@ -1,6 +1,7 @@
 import functools
 import random
 import tkinter as tk
+from tkinter import messagebox
 
 from PIL import ImageTk, Image
 
@@ -95,9 +96,6 @@ class BasicGui:
         if self.lives <= 0:
             self.gameOver()
 
-    def gameOver(self):
-        print("game over")
-
     def moveTurtles(self):
         for turtle in self.turtleSet:
             self.canvas.move(turtle, -10, random.randint(-100, 100))
@@ -128,6 +126,35 @@ class BasicGui:
     #         self.mainWindow.after(200, self.mainWindow.update)
     #         self.mainWindow.after(300, self.canvas.delete(self.turt))
 
+    def gameOver(self):
+        """Runs when player has lost all of their lives to inform them that they lost and ask if they want to play again."""
+        if self.lives == 0:
+            warning = "Game Over"
+            messagebox.showwarning(warning, "You Lose!")
+            again = messagebox.askretrycancel("Play again",
+                                              "Do you want to try again? Or do you give up when the going gets tough?")
+            if again:
+                myGui.run()
+            else:
+                self.quitCallBack()
+        else:
+            pass
+
+    def winner(self):
+        """Runs when the player defeats the last enemy turtle.
+        Congratulates them on winning and asks if they'd like to play again"""
+        if turtleLife == 0:
+            congrats = "You Win!! You Saved The Women's World Cup!"
+            messagebox.showinfo("Congratulations", congrats)
+            ask = messagebox.askretrycancel("Play Again", "Click retry to return to start")
+            if ask:
+                myGui.run()
+            else:
+                pass
+                self.quitCallBack()
+        else:
+            pass
+
     def run(self):
         self.mainWindow.mainloop()
 
@@ -135,5 +162,28 @@ class BasicGui:
         self.mainWindow.destroy()
 
 
+def intro():
+    """Creates the GUI and walks user through a tutorial of gameplay, allowing the user to start the game."""
+    messagebox.showinfo("Welcome", "Welcome to TURTLE SOCCER SMASH SISTERS")
+    ans = messagebox.askyesnocancel("Start Game", "Do you need a tutorial?")
+    print(ans)
+    if ans:
+        win = tk.Tk()
+        win.title("Tutorial")
+        L = tk.Label(win, text="Use the 'w' key to move your aim up. Use the 's' key to move it down.\n" +
+                               "Press d to go right and a to go left.\n You have three lives to defeat your"
+                               " turtle enemy. Good luck!",
+                     bg="light green", bd=5, relief=tk.SUNKEN, padx=100, pady=100)
+        L.grid(row=1, column=2)
+        win.mainloop()
+    else:
+        play = messagebox.askyesno("Start Game", "Start Gameplay?")
+        if play:
+            myGui = BasicGui()
+            # myGui.run()
+        else:
+            messagebox.showinfo("Welcome", "Welcome to TURTLE SOCCER SMASH SISTERS")
+
 myGui = BasicGui()
 myGui.run()
+# intro()
