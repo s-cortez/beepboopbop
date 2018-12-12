@@ -1,3 +1,4 @@
+import functools
 import random
 import tkinter as tk
 
@@ -23,7 +24,7 @@ class BasicGui:
         self.scoretext = self.updateScore(self.score)
 
         self.bindKeys()
-        self.moveTurtle([t for t in self.turtleSet][0])
+        self.moveTurtles()
 
     def configurewindow(self):
         mainwindow = tk.Tk()
@@ -53,7 +54,13 @@ class BasicGui:
 
     def updateLives(self, lives):
         self.lives = lives
-        self.livestext = self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
+
+        try:
+            self.canvas.delete(self.livestext)
+        except:
+            print("Initializing!")
+
+        self.livestext = self.canvas.create_text(70, 20, text=str(self.lives) + " Lives Remaining")
         return self.livestext
 
     def updateScore(self, score):
@@ -83,14 +90,22 @@ class BasicGui:
         self.canvas.delete(self.livestext)
         self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
 
-    def missedTurtle(self):
-        # self.updateLives(self.lives - 1)
-        # if self.lives <= 0:
-        #     self.gameOver()
-        print("idk")
+    def turtleHitPlayer(self):
+        self.updateLives(self.lives - 1)
+        if self.lives <= 0:
+            self.gameOver()
 
     def gameOver(self):
         print("game over")
+
+    def moveTurtles(self):
+        for turtle in self.turtleSet:
+            self.canvas.move(turtle, -10, random.randint(-100, 100))
+
+        if min([self.canvas.coords(t)[0] for t in self.turtleSet]) > 400:
+            self.mainWindow.after(200, self.moveTurtles)
+        else:
+            self.turtleHitPlayer()
 
     def moveTurtle(self, turtle):
 
