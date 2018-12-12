@@ -13,17 +13,17 @@ class BasicGui:
         self.canvas = self.createCanvas()
 
         self.soccerball = self.createImageFromFile("sprites/soccer.PNG", 75, 100)
-        self.turtle = self.createImageFromFile("sprites/Possessed boi.png", 900, 100)
+        self.turtleSet = self.createTurtleSet(1)
         self.createStaticImageFromFile("sprites/pal.png", -100, 100)
 
         self.lives = 3
         self.livestext = self.updateLives(self.lives)
 
-        # Score
         self.score = 0
         self.scoretext = self.updateScore(self.score)
 
         self.bindKeys()
+        self.moveTurtle([t for t in self.turtleSet][0])
 
     def configurewindow(self):
         mainwindow = tk.Tk()
@@ -39,6 +39,12 @@ class BasicGui:
         tkimage = ImageTk.PhotoImage(Image.open(image))
         self.imagerefs.add(tkimage)
         return self.canvas.create_image(x, y, image=tkimage)
+
+    def createTurtleSet(self, maxNumber):
+        return set([self.createTurtle() for _ in range(maxNumber)])
+
+    def createTurtle(self):
+        return self.createImageFromFile("sprites/Possessed boi.png", 900, 100)
 
     def createStaticImageFromFile(self, image, x, y):
         tkimage = ImageTk.PhotoImage(Image.open(image))
@@ -73,29 +79,40 @@ class BasicGui:
     def moveBallRight(self, event):
         self.canvas.move(self.soccerball, 5, 0)
 
-    # def moveTurtle(self):
-    #     turtlecoords = self.canvas.coords(self.turt)
-    #     self.canvas.move(self.turt, -10, random.randint(-100, 100))
-    #     if turtlecoords[0] > 400:
-    #         self.mainWindows.after(200, self.moveTurtle)
-    #     else:
-    #         self.setLives(self.lives - 1)
-
     def setLives(self, lives):
         self.canvas.delete(self.livestext)
         self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
-        # self.laterDude()
+
+    def missedTurtle(self):
+        # self.updateLives(self.lives - 1)
+        # if self.lives <= 0:
+        #     self.gameOver()
+        print("idk")
+
+    def gameOver(self):
+        print("game over")
+
+    def moveTurtle(self, turtle):
+
+        turtlecoords = self.canvas.coords(turtle)
+
+        self.canvas.move(turtle, -10, random.randint(-100, 100))
+        if turtlecoords[0] > 400:
+            self.mainWindow.after(200, self.moveTurtle(turtle))
+        else:
+            print("missed")
+            # self.missedTurtle()
 
     # def laterDude(self):
     #     self.mainWindows.after(300, self.canvas.delete(self.turt))
 
-    def hitTurtle(self):
-        turtlecoord = self.canvas.coords(self.turt)
-        ballcoord = self.canvas.coords(self.soccerball)
-        if turtlecoord == ballcoord:
-            self.score += 10
-            self.mainWindow.after(200, self.mainWindow.update)
-            self.mainWindow.after(300, self.canvas.delete(self.turt))
+    # def hitTurtle(self):
+    #     turtlecoord = self.canvas.coords(self.turt)
+    #     ballcoord = self.canvas.coords(self.soccerball)
+    #     if turtlecoord == ballcoord:
+    #         self.score += 10
+    #         self.mainWindow.after(200, self.mainWindow.update)
+    #         self.mainWindow.after(300, self.canvas.delete(self.turt))
 
     def run(self):
         self.mainWindow.mainloop()
