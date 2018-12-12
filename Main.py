@@ -101,22 +101,21 @@ class BasicGui:
     def moveTurtles(self):
         for turtle in self.turtleSet:
             self.canvas.move(turtle, -10, random.randint(-100, 100))
+            self.removeTurtleThatTouchesBall(turtle)
 
         if min([self.canvas.coords(t)[0] for t in self.turtleSet]) > 400:
             self.mainWindow.after(200, self.moveTurtles)
         else:
             self.turtleHitPlayer()
 
-    def moveTurtle(self, turtle):
+    def removeTurtleThatTouchesBall(self, turtle):
+        if self.checkTurtleCollision(turtle):
+            self.canvas.delete(turtle)
 
-        turtlecoords = self.canvas.coords(turtle)
-
-        self.canvas.move(turtle, -10, random.randint(-100, 100))
-        if turtlecoords[0] > 400:
-            self.mainWindow.after(200, self.moveTurtle(turtle))
-        else:
-            print("missed")
-            # self.missedTurtle()
+    def checkTurtleCollision(self, turtle):
+        print(self.canvas.find_above(self.soccerball))
+        print(turtle)
+        return False
 
     # def laterDude(self):
     #     self.mainWindows.after(300, self.canvas.delete(self.turt))
