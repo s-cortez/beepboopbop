@@ -17,13 +17,8 @@ class BasicGui:
         palLabel.place(x=-100, y=100)
 
         self.soccerball = self.createImageFromFile("sprites/soccer.PNG", 75, 100)
+        self.turtle = self.createImageFromFile("sprites/Possessed boi.png", 900, 100)
 
-        # Turtle
-        self.turtle = ImageTk.PhotoImage(Image.open("sprites/Possessed boi.png"))
-        self.turtx = 900
-        self.turty = 100
-        self.turt = self.canvas.create_image(self.turtx, self.turty, image=self.turtle)
-        self.moveTurtle()
         # Lives
         self.lives = 3
         self.livetext = self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
@@ -66,21 +61,21 @@ class BasicGui:
         self.canvas.move(self.soccerball, 10, 0)
         # self.mainWin.after(600, self.returnBall)
 
-    def moveTurtle(self):
-        turtlecoords = self.canvas.coords(self.turt)
-        self.canvas.move(self.turt, -10, random.randint(-100, 100))
-        if turtlecoords[0] > 400:
-            self.mainWindows.after(200, self.moveTurtle)
-        else:
-            self.setLives(self.lives - 1)
+    # def moveTurtle(self):
+    #     turtlecoords = self.canvas.coords(self.turt)
+    #     self.canvas.move(self.turt, -10, random.randint(-100, 100))
+    #     if turtlecoords[0] > 400:
+    #         self.mainWindows.after(200, self.moveTurtle)
+    #     else:
+    #         self.setLives(self.lives - 1)
 
     def setLives(self, lives):
         self.canvas.delete(self.livetext)
         self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
-        self.laterDude()
+        # self.laterDude()
 
-    def laterDude(self):
-        self.mainWindows.after(300, self.canvas.delete(self.turt))
+    # def laterDude(self):
+    #     self.mainWindows.after(300, self.canvas.delete(self.turt))
 
     def hitTurtle(self):
         turtlecoord = self.canvas.coords(self.turt)
