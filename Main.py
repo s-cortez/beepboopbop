@@ -14,10 +14,7 @@ class BasicGui:
 
         self.soccerball = self.createImageFromFile("sprites/soccer.PNG", 75, 100)
         self.turtle = self.createImageFromFile("sprites/Possessed boi.png", 900, 100)
-        # Christine
-        self.pal = ImageTk.PhotoImage(Image.open("sprites/pal.png"))
-        palLabel = tk.Label(self.mainWindow, image=self.pal)
-        palLabel.place(x=-100, y=100)
+        self.createStaticImageFromFile("sprites/pal.png", -100, 100)
 
         self.lives = 3
         self.livestext = self.updateLives(self.lives)
@@ -42,6 +39,11 @@ class BasicGui:
         tkimage = ImageTk.PhotoImage(Image.open(image))
         self.imagerefs.add(tkimage)
         return self.canvas.create_image(x, y, image=tkimage)
+
+    def createStaticImageFromFile(self, image, x, y):
+        tkimage = ImageTk.PhotoImage(Image.open(image))
+        self.imagerefs.add(tkimage)
+        tk.Label(self.mainWindow, image=tkimage).place(x=x, y=y)
 
     def updateLives(self, lives):
         self.lives = lives
@@ -69,7 +71,7 @@ class BasicGui:
         self.canvas.move(self.soccerball, -5, 0)
 
     def moveBallRight(self, event):
-        self.canvas.move(self.soccerball, 10, 0)
+        self.canvas.move(self.soccerball, 5, 0)
 
     # def moveTurtle(self):
     #     turtlecoords = self.canvas.coords(self.turt)
