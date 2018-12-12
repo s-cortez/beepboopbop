@@ -1,68 +1,80 @@
-import tkinter as tk
-from PIL import ImageTk, Image
-import turtleatr
-import time
 import random
+import tkinter as tk
+
+from PIL import ImageTk, Image
 
 
 class BasicGui:
 
     def __init__(self):
-        self.mainWin = tk.Tk()
-        self.mainWin.configure(background='white')
+        self.mainWindows = self.configureWindow()
+        self.canvas = self.createCanvas()
+
         # Christine
         self.pal = ImageTk.PhotoImage(Image.open("sprites/pal.png"))
-        palLabel = tk.Label(self.mainWin, image=self.pal)
+        palLabel = tk.Label(self.mainWindows, image=self.pal)
         palLabel.place(x=-100, y=100)
 
         # Soccer ball
         self.soccer = ImageTk.PhotoImage(Image.open("sprites/soccer.PNG"))
-        self.canvas = tk.Canvas(bg='white', width=2000, height=950)
-        self.canvas.place(x=150, y=0)
+
         self.x = 75
         self.y = 100
-        self.ball = self.canvas.create_image(self.x, self.y, image=self.soccer)  # switch to canvas create imag
+        self.ball = self.canvas.create_image(75, self.y, image=self.soccer)  # switch to canvas create imag
         # Turtle
         self.turtle = ImageTk.PhotoImage(Image.open("sprites/Possessed boi.png"))
         self.turtx = 900
         self.turty = 100
         self.turt = self.canvas.create_image(self.turtx, self.turty, image=self.turtle)
-        self.moveTurt()
+        self.moveTurtle()
         # Lives
+        self.lives = 3
+        self.livetext = self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
         self.setLives(3)
+
         # Score
-        self.lives = lives
         self.score = 0
         self.canvas.create_text(50, 30, text="High Score: " + str(self.score))
         # binding:
-        self.mainWin.bind("s", self.down)
-        self.mainWin.bind("w", self.up)
-        self.mainWin.bind("d", self.right)
-        self.mainWin.bind('a', self.left)
+        self.mainWindows.bind("s", self.moveBallDown)
+        self.mainWindows.bind("w", self.moveBallUp)
+        self.mainWindows.bind("d", self.moveBallRight)
+        self.mainWindows.bind('a', self.moveBallLeft)
 
-    def down(self, event):
+    def configureWindow(self):
+        mainwindow = tk.Tk()
+        mainwindow.configure(background='white')
+        return mainwindow
+
+
+    def createCanvas(self):
+        canvas = tk.Canvas(bg='white', width=2000, height=950)
+        canvas.place(x=150, y=0)
+        return canvas
+
+    def moveBallDown(self, event):
         self.canvas.move(self.ball, 0, 5)
         self.y += 5
 
-    def up(self, event):
+    def moveBallUp(self, event):
         self.canvas.move(self.ball, 0, -5)
         self.y += -5
 
-    def left(self, event):
+    def moveBallLeft(self, event):
         self.canvas.move(self.ball, -5, 0)
         self.x -= 5
 
-    def right(self, event):
+    def moveBallRight(self, event):
         self.canvas.move(self.ball, 10, 0)
         # self.mainWin.after(600, self.returnBall)
 
-    def moveTurt(self):
+    def moveTurtle(self):
         turtlecoords = self.canvas.coords(self.turt)
         self.canvas.move(self.turt, -10, random.randint(-100, 100))
         if turtlecoords[0] > 400:
-            self.mainWin.after(200, self.moveTurt)
+            self.mainWindows.after(200, self.moveTurtle)
         else:
-            self.setLives(self.lives-1)
+            self.setLives(self.lives - 1)
 
     def setLives(self, lives):
         self.canvas.delete(self.livetext)
@@ -70,21 +82,21 @@ class BasicGui:
         self.laterDude()
 
     def laterDude(self):
-        self.mainWin.after(300, self.canvas.delete(self.turt))
+        self.mainWindows.after(300, self.canvas.delete(self.turt))
 
     def hitTurtle(self):
         turtlecoord = self.canvas.coords(self.turt)
         ballcoord = self.canvas.coords(self.ball)
         if turtlecoord == ballcoord:
             self.score += 10
-            self.mainWin.after(200, self.mainWin.update)
-            self.mainWin.after(300, self.canvas.delete(self.turt))
+            self.mainWindows.after(200, self.mainWindows.update)
+            self.mainWindows.after(300, self.canvas.delete(self.turt))
 
     def run(self):
-        self.mainWin.mainloop()
+        self.mainWindows.mainloop()
 
     def quitCallback(self):
-        self.mainWin.destroy()
+        self.mainWindows.destroy()
 
 
 myGui = BasicGui()
