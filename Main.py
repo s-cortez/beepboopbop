@@ -7,6 +7,7 @@ from PIL import ImageTk, Image
 class BasicGui:
 
     def __init__(self):
+        self.imagerefs = set()
         self.mainWindows = self.configureWindow()
         self.canvas = self.createCanvas()
 
@@ -15,12 +16,8 @@ class BasicGui:
         palLabel = tk.Label(self.mainWindows, image=self.pal)
         palLabel.place(x=-100, y=100)
 
-        # Soccer ball
-        self.soccer = ImageTk.PhotoImage(Image.open("sprites/soccer.PNG"))
+        self.soccerball = self.createImageFromFile("sprites/soccer.PNG", 75, 100)
 
-        self.x = 75
-        self.y = 100
-        self.ball = self.canvas.create_image(75, self.y, image=self.soccer)  # switch to canvas create imag
         # Turtle
         self.turtle = ImageTk.PhotoImage(Image.open("sprites/Possessed boi.png"))
         self.turtx = 900
@@ -46,26 +43,27 @@ class BasicGui:
         mainwindow.configure(background='white')
         return mainwindow
 
-
     def createCanvas(self):
         canvas = tk.Canvas(bg='white', width=2000, height=950)
         canvas.place(x=150, y=0)
         return canvas
 
+    def createImageFromFile(self, image, x, y):
+        tkimage = ImageTk.PhotoImage(Image.open(image))
+        self.imagerefs.add(tkimage)
+        return self.canvas.create_image(x, y, image=tkimage)
+
     def moveBallDown(self, event):
-        self.canvas.move(self.ball, 0, 5)
-        self.y += 5
+        self.canvas.move(self.soccerball, 0, 5)
 
     def moveBallUp(self, event):
-        self.canvas.move(self.ball, 0, -5)
-        self.y += -5
+        self.canvas.move(self.soccerball, 0, -5)
 
     def moveBallLeft(self, event):
-        self.canvas.move(self.ball, -5, 0)
-        self.x -= 5
+        self.canvas.move(self.soccerball, -5, 0)
 
     def moveBallRight(self, event):
-        self.canvas.move(self.ball, 10, 0)
+        self.canvas.move(self.soccerball, 10, 0)
         # self.mainWin.after(600, self.returnBall)
 
     def moveTurtle(self):
@@ -86,7 +84,7 @@ class BasicGui:
 
     def hitTurtle(self):
         turtlecoord = self.canvas.coords(self.turt)
-        ballcoord = self.canvas.coords(self.ball)
+        ballcoord = self.canvas.coords(self.soccerball)
         if turtlecoord == ballcoord:
             self.score += 10
             self.mainWindows.after(200, self.mainWindows.update)
