@@ -17,7 +17,7 @@ class BasicGui:
 
         self.soccerball = self.createMovableImage("sprites/soccer.PNG", 75,
                                                   100)  # .createImage(75, 100) #self.createImageFromFile("sprites/soccer.PNG", 75, 100)
-        self.turtleSet = self.createTurtleSet(1)
+        self.turtleSet = self.createTurtleSet(5)
         self.turtleDeleteSet = set()
         self.createStaticImageFromFile("sprites/pal.png", -100, 100)
 
@@ -96,6 +96,7 @@ class BasicGui:
             self.canvas.move(turtle.canvasimage, -10, random.randint(-100, 100))
             self.removeTurtleThatTouchesBall(turtle)
         self.turtleSet.difference_update(self.turtleDeleteSet)
+        self.updateScore(self.score+len(self.turtleDeleteSet)*10)
         self.turtleDeleteSet = set()
 
         if self.turtleSet:
@@ -104,8 +105,7 @@ class BasicGui:
             else:
                 self.turtleHitPlayer()
         else:
-            self.updateScore(self.score + 10)
-            print("no more turtles")
+            self.winner()
 
     def removeTurtleThatTouchesBall(self, turtle):
         if self.checkTurtleCollision(turtle):
@@ -141,17 +141,16 @@ class BasicGui:
     def winner(self):
         """Runs when the player defeats the last enemy turtle.
         Congratulates them on winning and asks if they'd like to play again"""
-        if turtleLife == 0:
-            congrats = "You Win!! You Saved The Women's World Cup!"
-            messagebox.showinfo("Congratulations", congrats)
-            ask = messagebox.askretrycancel("Play Again", "Click retry to return to start")
-            if ask:
-                myGui.run()
-            else:
-                pass
-                self.quitCallBack()
+
+        congrats = "You Win!! You Saved The Women's World Cup!"
+        messagebox.showinfo("Congratulations", congrats)
+        ask = messagebox.askretrycancel("Play Again", "Click retry to return to start")
+        if ask:
+            myGui.run()
         else:
             pass
+            self.quitCallback()
+
 
     def run(self):
         self.mainWindow.mainloop()
