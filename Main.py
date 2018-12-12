@@ -4,36 +4,31 @@ import tkinter as tk
 from PIL import ImageTk, Image
 
 
+# noinspection PyPep8Naming
 class BasicGui:
 
     def __init__(self):
         self.imagerefs = set()
-        self.mainWindows = self.configureWindow()
+        self.mainWindow = self.configurewindow()
         self.canvas = self.createCanvas()
-
-        # Christine
-        self.pal = ImageTk.PhotoImage(Image.open("sprites/pal.png"))
-        palLabel = tk.Label(self.mainWindows, image=self.pal)
-        palLabel.place(x=-100, y=100)
 
         self.soccerball = self.createImageFromFile("sprites/soccer.PNG", 75, 100)
         self.turtle = self.createImageFromFile("sprites/Possessed boi.png", 900, 100)
+        # Christine
+        self.pal = ImageTk.PhotoImage(Image.open("sprites/pal.png"))
+        palLabel = tk.Label(self.mainWindow, image=self.pal)
+        palLabel.place(x=-100, y=100)
 
-        # Lives
         self.lives = 3
-        self.livetext = self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
-        self.setLives(3)
+        self.livestext = self.updateLives(self.lives)
 
         # Score
         self.score = 0
-        self.canvas.create_text(50, 30, text="High Score: " + str(self.score))
-        # binding:
-        self.mainWindows.bind("s", self.moveBallDown)
-        self.mainWindows.bind("w", self.moveBallUp)
-        self.mainWindows.bind("d", self.moveBallRight)
-        self.mainWindows.bind('a', self.moveBallLeft)
+        self.scoretext = self.updateScore(self.score)
 
-    def configureWindow(self):
+        self.bindKeys()
+
+    def configurewindow(self):
         mainwindow = tk.Tk()
         mainwindow.configure(background='white')
         return mainwindow
@@ -48,6 +43,22 @@ class BasicGui:
         self.imagerefs.add(tkimage)
         return self.canvas.create_image(x, y, image=tkimage)
 
+    def updateLives(self, lives):
+        self.lives = lives
+        self.livestext = self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
+        return self.livestext
+
+    def updateScore(self, score):
+        self.score = score
+        self.scoretext = self.canvas.create_text(50, 30, text="High Score: " + str(self.score))
+        return self.scoretext
+
+    def bindKeys(self):
+        self.mainWindow.bind("s", self.moveBallDown)
+        self.mainWindow.bind("w", self.moveBallUp)
+        self.mainWindow.bind("d", self.moveBallRight)
+        self.mainWindow.bind('a', self.moveBallLeft)
+
     def moveBallDown(self, event):
         self.canvas.move(self.soccerball, 0, 5)
 
@@ -59,7 +70,6 @@ class BasicGui:
 
     def moveBallRight(self, event):
         self.canvas.move(self.soccerball, 10, 0)
-        # self.mainWin.after(600, self.returnBall)
 
     # def moveTurtle(self):
     #     turtlecoords = self.canvas.coords(self.turt)
@@ -70,7 +80,7 @@ class BasicGui:
     #         self.setLives(self.lives - 1)
 
     def setLives(self, lives):
-        self.canvas.delete(self.livetext)
+        self.canvas.delete(self.livestext)
         self.canvas.create_text(50, 20, text=str(self.lives) + " Lives Remaining")
         # self.laterDude()
 
@@ -82,14 +92,14 @@ class BasicGui:
         ballcoord = self.canvas.coords(self.soccerball)
         if turtlecoord == ballcoord:
             self.score += 10
-            self.mainWindows.after(200, self.mainWindows.update)
-            self.mainWindows.after(300, self.canvas.delete(self.turt))
+            self.mainWindow.after(200, self.mainWindow.update)
+            self.mainWindow.after(300, self.canvas.delete(self.turt))
 
     def run(self):
-        self.mainWindows.mainloop()
+        self.mainWindow.mainloop()
 
     def quitCallback(self):
-        self.mainWindows.destroy()
+        self.mainWindow.destroy()
 
 
 myGui = BasicGui()
