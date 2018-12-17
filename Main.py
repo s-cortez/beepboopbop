@@ -28,11 +28,13 @@ class BasicGui:
         self.scoretext = self.updateScore(self.score)
 
         self.bindKeys()
-        self.moveTurtles()
 
     def configurewindow(self):
         mainwindow = tk.Tk()
         mainwindow.configure(background='white')
+        mainwindow.title("Turtle Soccer Smash Sisters")
+        mainwindow.overrideredirect(True)
+        mainwindow.geometry("{0}x{1}+0+0".format(mainwindow.winfo_screenwidth(), mainwindow.winfo_screenheight()))
         return mainwindow
 
     def createCanvas(self):
@@ -44,7 +46,7 @@ class BasicGui:
         return MovableImage.MovableImage(self.canvas, image, x, y)
 
     def createTurtleSet(self, maxNumber):
-        return set([self.createTurtle() for _ in range(maxNumber)])
+        return set([self.createTurtle() for _ in range(random.randint(0,maxNumber+1))])
 
     def createTurtle(self):
         return self.createMovableImage("sprites/Possessed boi.png", 900, 100)
@@ -88,9 +90,9 @@ class BasicGui:
 
     def turtleHitPlayer(self):
         self.updateLives(self.lives - 1)
-        if self.lives <= 0:
+        if self.lives == 0:
             self.gameOver()
-
+            pass
     def moveTurtles(self):
         for turtle in self.turtleSet:
             self.canvas.move(turtle.canvasimage, -10, random.randint(-100, 100))
@@ -102,15 +104,25 @@ class BasicGui:
         if self.turtleSet:
             if min([self.canvas.coords(t.canvasimage)[0] for t in self.turtleSet]) > 400:
                 self.mainWindow.after(200, self.moveTurtles)
+                self.mainWindow.after(10000, self.resetgame)
             else:
                 self.turtleHitPlayer()
         else:
+            self.checkScore()
+
+
+    def checkScore(self):
+        if self.score>=500:
             self.winner()
+        else:
+            pass
 
     def removeTurtleThatTouchesBall(self, turtle):
         if self.checkTurtleCollision(turtle):
             self.deleteTurtle(turtle)
-
+    def resetgame(self):
+        self.turtleSet = self.createTurtleSet(random.randint(2, 5))
+        self.moveTurtles()
     def checkTurtleCollision(self, turtle):
         return self.oneDimCollision(self.soccerball.coords()[0], self.soccerball.coords()[0] + self.soccerball.size[0],
                                     turtle.coords()[0], turtle.coords()[0] + turtle.size[0]) and self.oneDimCollision(
@@ -126,17 +138,14 @@ class BasicGui:
 
     def gameOver(self):
         """Runs when player has lost all of their lives to inform them that they lost and ask if they want to play again."""
-        if self.lives == 0:
-            warning = "Game Over"
-            messagebox.showwarning(warning, "You Lose!")
-            again = messagebox.askretrycancel("Play again",
-                                              "Do you want to try again? Or do you give up when the going gets tough?")
-            if again:
-                myGui.run()
-            else:
-                self.quitCallBack()
+        warning = "Game Over"
+        messagebox.showwarning(warning, "You Lose!")
+        again = messagebox.askretrycancel("Play again",
+                                          "Do you want to try again? Or do you give up when the going gets tough?")
+        if again:
+            myGui.run()
         else:
-            pass
+            self.quitCallback()
 
     def winner(self):
         """Runs when the player defeats the last enemy turtle.
@@ -146,42 +155,43 @@ class BasicGui:
         messagebox.showinfo("Congratulations", congrats)
         ask = messagebox.askretrycancel("Play Again", "Click retry to return to start")
         if ask:
-            myGui.run()
+            self.quitCallback()
+
         else:
-            pass
             self.quitCallback()
 
 
     def run(self):
+        self.intro()
         self.mainWindow.mainloop()
 
     def quitCallback(self):
         self.mainWindow.destroy()
 
 
-def intro():
-    """Creates the GUI and walks user through a tutorial of gameplay, allowing the user to start the game."""
-    messagebox.showinfo("Welcome", "Welcome to TURTLE SOCCER SMASH SISTERS")
-    ans = messagebox.askyesnocancel("Start Game", "Do you need a tutorial?")
-    print(ans)
-    if ans:
-        win = tk.Tk()
-        win.title("Tutorial")
-        L = tk.Label(win, text="Use the 'w' key to move your aim up. Use the 's' key to move it down.\n" +
-                               "Press d to go right and a to go left.\n You have three lives to defeat your"
-                               " turtle enemy. Good luck!",
-                     bg="light green", bd=5, relief=tk.SUNKEN, padx=100, pady=100)
-        L.grid(row=1, column=2)
-        win.mainloop()
-    else:
-        play = messagebox.askyesno("Start Game", "Start Gameplay?")
-        if play:
-            myGui = BasicGui()
-            # myGui.run()
+    def intro(self):
+        """Creates the GUI and walks user through a tutorial of gameplay, allowing the user to start the game."""
+        messagebox.showinfo("Welcome", "Welcome to TURTLE SOCCER SMASH SISTERS")
+        ans = messagebox.askyesnocancel("Start Game", "Do you need a tutorial?")
+        print(ans)
+        if ans:
+            win = tk.Toplevel()
+            win.title("Tutorial")
+            L = tk.Label(win, text="Use the 'w' key to move your aim up. Use the 's' key to move it down.\n" +
+                                   "Press d to go right and a to go left.\n You have three lives to defeat your"
+                                   " turtle enemy. Good luck!",
+                         bg="light green", bd=5, relief=tk.SUNKEN, padx=100, pady=100)
+            L.grid(row=1, column=2)
+            play = messagebox.askyesno("Start Game", "Start Gameplay?")
+            if play:
+                self.moveTurtles()
         else:
-            messagebox.showinfo("Welcome", "Welcome to TURTLE SOCCER SMASH SISTERS")
+            play = messagebox.askyesno("Start Game", "Start Gameplay?")
+            if play:
+                self.moveTurtles()
+            else:
+                messagebox.showinfo("Welcome", "Welcome to TURTLE SOCCER SMASH SISTERS")
 
 
 myGui = BasicGui()
 myGui.run()
-# intro()

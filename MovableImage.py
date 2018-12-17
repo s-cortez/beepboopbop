@@ -12,7 +12,7 @@ class MovableImage:
         self.canvasimage = self.createImage(x, y)
         self.size = (self.tkimage.width(), self.tkimage.height())
 
-        self.movementScaling = 50
+        self.movementScaling = 10
 
     def createImage(self, x, y):
         self.tkimage = ImageTk.PhotoImage(Image.open(self.imagesrc))
