@@ -46,7 +46,7 @@ class BasicGui:
         return MovableImage.MovableImage(self.canvas, image, x, y)
 
     def createTurtleSet(self, maxNumber):
-        return set([self.createTurtle() for _ in range(random.randint(0, maxNumber + 1))])
+        return set([self.createTurtle() for _ in range(maxNumber)])
 
     def createTurtle(self):
         return self.createMovableImage("sprites/Possessed boi.png", 900, 100)
@@ -90,46 +90,34 @@ class BasicGui:
 
     def turtleHitPlayer(self):
         self.updateLives(self.lives - 1)
-        if self.lives == 0:
+        if self.lives <= 0:
             self.gameOver()
-            pass
 
     def moveTurtles(self):
         for turtle in self.turtleSet:
             self.canvas.move(turtle.canvasimage, -10, random.randint(-100, 100))
             self.removeTurtleThatTouchesBall(turtle)
         self.turtleSet.difference_update(self.turtleDeleteSet)
-        self.updateScore(self.score + len(self.turtleDeleteSet) * 10)
+        self.updateScore(self.score+len(self.turtleDeleteSet)*10)
         self.turtleDeleteSet = set()
 
         if self.turtleSet:
             if min([self.canvas.coords(t.canvasimage)[0] for t in self.turtleSet]) > 400:
                 self.mainWindow.after(200, self.moveTurtles)
-                self.mainWindow.after(10000, self.resetgame)
             else:
                 self.turtleHitPlayer()
         else:
-            self.checkScore()
-
-    def checkScore(self):
-        if self.score >= 500:
             self.winner()
-        else:
-            pass
 
     def removeTurtleThatTouchesBall(self, turtle):
         if self.checkTurtleCollision(turtle):
             self.deleteTurtle(turtle)
 
-    def resetgame(self):
-        self.turtleSet = self.createTurtleSet(random.randint(2, 5))
-        self.moveTurtles()
-
     def checkTurtleCollision(self, turtle):
         return self.oneDimCollision(self.soccerball.coords()[0], self.soccerball.coords()[0] + self.soccerball.size[0],
                                     turtle.coords()[0], turtle.coords()[0] + turtle.size[0]) and self.oneDimCollision(
             self.soccerball.coords()[1], self.soccerball.coords()[1] + self.soccerball.size[1], turtle.coords()[1],
-                                         turtle.coords()[1] + turtle.size[1])
+            turtle.coords()[1] + turtle.size[1])
 
     def oneDimCollision(self, bx1, bx2, tx1, tx2):
         return bx1 < tx1 < bx2 or bx1 < tx2 < bx2 or (bx1 > tx1 and bx2 < tx2) or (bx1 < tx1 and bx2 > tx2)
@@ -162,12 +150,14 @@ class BasicGui:
         else:
             self.quitCallback()
 
+
     def run(self):
         self.intro()
         self.mainWindow.mainloop()
 
     def quitCallback(self):
         self.mainWindow.destroy()
+
 
     def intro(self):
         """Creates the GUI and walks user through a tutorial of gameplay, allowing the user to start the game."""
