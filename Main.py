@@ -106,9 +106,16 @@ class BasicGui:
                 self.mainWindow.after(200, self.moveTurtles)
             else:
                 self.turtleHitPlayer()
+                self.turtleSet = self.createTurtleSet(random.randint(1, 5))
+                self.moveTurtles()
         else:
-            self.winner()
+            self.checkScore()
+            self.turtleSet= self.createTurtleSet(random.randint(1,5))
+            self.moveTurtles()
 
+    def checkScore(self):
+        if self.score>=500:
+            self.winner()
     def removeTurtleThatTouchesBall(self, turtle):
         if self.checkTurtleCollision(turtle):
             self.deleteTurtle(turtle)
@@ -146,7 +153,7 @@ class BasicGui:
         ask = messagebox.askretrycancel("Play Again", "Click retry to return to start")
         if ask:
             self.quitCallback()
-
+            myGui.run()
         else:
             self.quitCallback()
 
